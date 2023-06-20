@@ -2,6 +2,9 @@ import { OfflineDirectSigner } from "@cosmjs/proto-signing"
 import { expect } from "chai"
 import { config } from "dotenv"
 import _ from "../../environment"
+import { CheckersSigningStargateClient } from "../../src/checkers_signingstargateclient"
+import { CheckersExtension } from "../../src/modules/checkers/queries"
+
 import { getSignerFromMnemonic } from "../../src/util/signer"
 
 
@@ -19,4 +22,20 @@ describe("StoredGame Action", function () {
     })
     it("runs", async function () {
     })
+
+    let aliceClient: CheckersSigningStargateClient,
+        bobClient: CheckersSigningStargateClient,
+        checkers: CheckersExtension["checkers"]
+
+    before("create signing clients", async function () {
+        aliceClient = await CheckersSigningStargateClient.connectWithSigner(RPC_URL!, aliceSigner, {
+            gasPrice: GasPrice.fromString("0stake"),
+        })
+        bobClient = await CheckersSigningStargateClient.connectWithSigner(RPC_URL!, bobSigner, {
+            gasPrice: GasPrice.fromString("0stake"),
+        })
+        checkers = aliceClient.checkersQueryClient!.checkers
+    })
+
+
 })
