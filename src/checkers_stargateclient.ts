@@ -4,7 +4,9 @@ import {
     QueryClient, 
     StargateClient, 
     StargateClientOptions,
-    defaultRegistryTypes
+    SigningStargateClient,
+    SigningStargateClientOptions,
+    defaultRegistryTypes,
 } from "@cosmjs/stargate"
 
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc"
@@ -40,4 +42,32 @@ export const checkersDefaultRegistryTypes: ReadonlyArray<[string, GeneratedType]
 
 function createDefaultRegistry(): Registry {
     return new Registry(checkersDefaultRegistryTypes)
+}
+
+// Create signing client
+export class CheckersSigningStargateClient extends SigningStargateClient {
+    public readonly checkersQueryClient: CheckersExtension | undefined
+
+    public static async connectWithSigner(
+        endpoint: string,
+        signer: OfflineSigner,
+        options: SigningStargateClientOptions = {},
+    ): Promise<CheckersSigningStargateClient> {
+        const tmClient = await Tendermint34Client.connect(endpoint)
+        return new CheckersSigningStargateClient(tmClient, signer, {
+            registry: createDefaultRegistry(),
+            ...options,
+        })
+    }
+
+    protected constructor(
+        tmClient: Tendermint34Client | undefined,
+        signer: OfflineSigner,
+        options: SigningStargateClientOptions,
+    ) {
+        super(tmClient, signer, options)
+        if (tmClient) {
+            this.checkersQueryClient = QueryClient.withExtensions(tmClient, setupCheckersExtension)
+        }
+    }
 }
