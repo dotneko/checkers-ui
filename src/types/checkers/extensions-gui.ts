@@ -1,6 +1,6 @@
-import { IGameInfo } from "src/sharedTypes"
 import { CheckersStargateClient } from "src/checkers_stargateclient"
-import { QueryCanPlayMoveResponse } from "../generated/checkers/query"
+import { IGameInfo } from "src/sharedTypes"
+
 import Long from "long"
 import { storedToGameInfo } from "./board"
 
@@ -8,12 +8,6 @@ import { storedToGameInfo } from "./board"
 declare module "../../checkers_stargateclient" {
     interface CheckersStargateClient {
         getGuiGames(): Promise<IGameInfo[]>
-        getGuiGame(index: string): Promise<IGameInfo | undefined>
-        canPlayGuiMove(
-            gameIndex: string,
-            playerId: number,
-            positions: number[][],
-        ): Promise<QueryCanPlayMoveResponse>
     }
 }
 
