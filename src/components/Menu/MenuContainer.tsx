@@ -9,6 +9,7 @@ import Menu from "./Menu";
 
 interface IMenuContainerProps {
     location?: any;
+    rpcUrl: string;
 }
 
 interface IMenuContainerState {
