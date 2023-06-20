@@ -7,14 +7,25 @@ import {
     SigningStargateClient,
     SigningStargateClientOptions,
     defaultRegistryTypes,
+    DeliverTxResponse,
+    StdFee,
 } from "@cosmjs/stargate"
 
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc"
 import { CheckersExtension, setupCheckersExtension } from "./modules/checkers/queries"
+import Long from "long"
 
 import {
     checkersTypes,
+    MsgCreateGameEncodeObject,
+    MsgPlayMoveEncodeObject,
+    typeUrlMsgCreateGame,
+    typeUrlMsgPlayMove,
+
 } from "./types/checkers/messages"
+
+import { Pos } from "./types/checkers/player"
+
 
 export class CheckersStargateClient extends StargateClient {
     public readonly checkersQueryClient: CheckersExtension | undefined
@@ -69,5 +80,49 @@ export class CheckersSigningStargateClient extends SigningStargateClient {
         if (tmClient) {
             this.checkersQueryClient = QueryClient.withExtensions(tmClient, setupCheckersExtension)
         }
+    }
+
+    public async createGame(
+        creator: string,
+        black: string,
+        red: string,
+        denom: string,
+        wager: Long,
+        fee: StdFee | "auto" | number,
+        memo = "",
+    ): Promise<DeliverTxResponse> {
+        const createMsg: MsgCreateGameEncodeObject = {
+            typeUrl: typeUrlMsgCreateGame,
+            value: {
+                black: black,
+                red: red,
+                creator: creator,
+                denom: denom,
+                wager: wager,
+            },
+        }
+        return this.signAndBroadcast(creator, [createMsg], fee, memo)
+    }
+
+    public async playMove(
+        creator: string,
+        gameIndex: string,
+        from: Pos,
+        to: Pos,
+        fee: StdFee | "auto" | number,
+        memo = "",
+    ): Promise<DeliverTxResponse> {
+        const playMoveMsg: MsgPlayMoveEncodeObject = {
+            typeUrl: typeUrlMsgPlayMove,
+            value: {
+                creator: creator,
+                gameIndex: gameIndex,
+                fromX: Long.fromNumber(from.x),
+                fromY: Long.fromNumber(from.y),
+                toX: Long.fromNumber(to.x),
+                toY: Long.fromNumber(to.y),
+            },
+        }
+        return this.signAndBroadcast(creator, [playMoveMsg], fee, memo)
     }
 }
