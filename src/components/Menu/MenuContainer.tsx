@@ -1,6 +1,7 @@
 import Lockr from "lockr";
 import QueryString from "query-string";
 import React, { Component } from "react";
+import { CheckersStargateClient } from "src/checkers_stargateclient"
 import { IGameInfo } from "../../sharedTypes";
 import Menu from "./Menu";
 
@@ -16,6 +17,8 @@ interface IMenuContainerState {
     saved: IGameInfo[];
     showAlert: boolean;
     showModal: boolean;
+    client: CheckersStargateClient | undefined;
+
 }
 
 export default class MenuContainer extends Component<
@@ -27,7 +30,8 @@ export default class MenuContainer extends Component<
         this.state = {
             saved: [],
             showAlert: false,
-            showModal: false
+            showModal: false,
+            client: undefined,
         };
         this.closeModal = this.closeModal.bind(this);
         this.deleteGame = this.deleteGame.bind(this);
@@ -50,6 +54,12 @@ export default class MenuContainer extends Component<
         this.setState({
             saved: Lockr.get("saved_games") || []
         });
+    }
+    protected async getStargateClient(): Promise<CheckersStargateClient> {
+        const client: CheckersStargateClient =
+            this.state.client ?? (await CheckersStargateClient.connect(this.props.rpcUrl))
+        if (!this.state.client) this.setState({ client: client })
+        return client
     }
     /**
      * dismissAlert
