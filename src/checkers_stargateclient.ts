@@ -1,6 +1,18 @@
-import { QueryClient, StargateClient, StargateClientOptions } from "@cosmjs/stargate"
+import { GeneratedType, OfflineSigner, Registry } from "@cosmjs/proto-signing"
+
+import { 
+    QueryClient, 
+    StargateClient, 
+    StargateClientOptions,
+    defaultRegistryTypes
+} from "@cosmjs/stargate"
+
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc"
 import { CheckersExtension, setupCheckersExtension } from "./modules/checkers/queries"
+
+import {
+    checkersTypes,
+} from "./types/checkers/messages"
 
 export class CheckersStargateClient extends StargateClient {
     public readonly checkersQueryClient: CheckersExtension | undefined
@@ -19,4 +31,13 @@ export class CheckersStargateClient extends StargateClient {
             this.checkersQueryClient = QueryClient.withExtensions(tmClient, setupCheckersExtension)
         }
     }
+}
+
+export const checkersDefaultRegistryTypes: ReadonlyArray<[string, GeneratedType]> = [
+    ...defaultRegistryTypes,
+    ...checkersTypes,
+]
+
+function createDefaultRegistry(): Registry {
+    return new Registry(checkersDefaultRegistryTypes)
 }
