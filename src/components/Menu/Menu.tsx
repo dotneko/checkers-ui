@@ -14,6 +14,7 @@ interface IMenuProps {
     modalIsShown: boolean;
     openModal: () => void;
     showAlert: boolean;
+    rpcUrl: string
 }
 
 const Menu = (props: IMenuProps) => {
@@ -21,7 +22,7 @@ const Menu = (props: IMenuProps) => {
         <MenuItem
             deleteGame={props.deleteGame}
             info={game}
-            index={index}
+            index={game.index!}
             key={"game" + index}
         />
     ));
