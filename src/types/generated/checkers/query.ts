@@ -9,7 +9,7 @@ import {
 import Long from "long";
 import _m0 from "protobufjs/minimal";
 
-export const protobufPackage = "dotneko.checkers.checkers";
+export const protobufPackage = "b9lab.checkers.checkers";
 
 /** QueryParamsRequest is request type for the Query/Params RPC method. */
 export interface QueryParamsRequest {}
@@ -770,7 +770,7 @@ export class QueryClientImpl implements Query {
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse> {
     const data = QueryParamsRequest.encode(request).finish();
     const promise = this.rpc.request(
-      "dotneko.checkers.checkers.Query",
+      protobufPackage + ".Query",
       "Params",
       data
     );
@@ -784,7 +784,7 @@ export class QueryClientImpl implements Query {
   ): Promise<QueryGetSystemInfoResponse> {
     const data = QueryGetSystemInfoRequest.encode(request).finish();
     const promise = this.rpc.request(
-      "dotneko.checkers.checkers.Query",
+      protobufPackage + ".Query",
       "SystemInfo",
       data
     );
@@ -798,7 +798,7 @@ export class QueryClientImpl implements Query {
   ): Promise<QueryGetStoredGameResponse> {
     const data = QueryGetStoredGameRequest.encode(request).finish();
     const promise = this.rpc.request(
-      "dotneko.checkers.checkers.Query",
+      protobufPackage + ".Query",
       "StoredGame",
       data
     );
@@ -812,7 +812,7 @@ export class QueryClientImpl implements Query {
   ): Promise<QueryAllStoredGameResponse> {
     const data = QueryAllStoredGameRequest.encode(request).finish();
     const promise = this.rpc.request(
-      "dotneko.checkers.checkers.Query",
+      protobufPackage + ".Query",
       "StoredGameAll",
       data
     );
@@ -826,7 +826,7 @@ export class QueryClientImpl implements Query {
   ): Promise<QueryCanPlayMoveResponse> {
     const data = QueryCanPlayMoveRequest.encode(request).finish();
     const promise = this.rpc.request(
-      "dotneko.checkers.checkers.Query",
+      protobufPackage + ".Query",
       "CanPlayMove",
       data
     );
