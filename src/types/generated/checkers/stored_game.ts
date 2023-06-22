@@ -2,7 +2,7 @@
 import Long from "long";
 import _m0 from "protobufjs/minimal";
 
-export const protobufPackage = "dotneko.checkers.checkers";
+export const protobufPackage = "b5lab.checkers.checkers";
 
 export interface StoredGame {
   index: string;
