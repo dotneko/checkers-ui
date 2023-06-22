@@ -5,6 +5,9 @@ import { DbType } from "./types"
 
 import { config } from "dotenv"
 import { CheckersStargateClient } from "../checkers_stargateclient"
+import { sha256 } from "@cosmjs/crypto"
+import { toHex } from "@cosmjs/encoding"
+import { Block, IndexedTx } from "@cosmjs/stargate"
 
 config()
 
@@ -60,13 +63,34 @@ export const createIndexer = async () => {
 
     const poll = async () => {
         const currentHeight = await client.getHeight()
-        console.log(new Date(Date.now()).toISOString(),
-            "Current heights:",
-            db.status.block.height,
-            "<=",
-            currentHeight,
-        )
+        if (db.status.block.height <= currentHeight - 100)
+            console.log(`Catching up ${db.status.block.height}..${currentHeight}`)
+        while (db.status.block.height < currentHeight) {
+            const processing = db.status.block.height + 1
+            process.stdout.cursorTo(0)
+            // Get the block
+            const block: Block = await client.getBlock(processing)
+            process.stdout.write(`Handling block: ${processing} with ${block.txs.length} txs`)
+            await handleBlock(block)
+            db.status.block.height = processing
+        }
+        await saveDb()
         timer = setTimeout(poll, pollIntervalMs)
+    }
+
+    const handleBlock = async (block: Block) => {
+        if (0 < block.txs.length) console.log("")
+        let txIndex = 0
+        while (txIndex < block.txs.length) {
+            const txHash: string = toHex(sha256(block.txs[txIndex])).toUpperCase()
+            const indexed: IndexedTx | null = await client.getTx(txHash)
+            if (!indexed) throw new Error(`Could not find indexed tx: ${txHash}`)
+            console.log("Found indexed txHash:", txHash)
+            //await handleTx(indexed)
+            txIndex++
+        }
+        // TODO handle EndBlock
+        
     }
 
     process.on("SIGINT", () => {
