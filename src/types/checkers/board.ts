@@ -1,6 +1,6 @@
 import { IGameInfo } from "src/sharedTypes"
 import { StoredGame } from "../generated/checkers/stored_game"
-import { Player } from "./player"
+import { Player, Pos } from "./player"
 
 const rowSeparator = "|"
 export const pieceTranslator = {
@@ -40,4 +40,8 @@ export function storedToGameInfo(game: StoredGame): IGameInfo {
 
 export function storedsToGameInfos(games: StoredGame[]): IGameInfo[] {
     return games.map(storedToGameInfo);
+}
+
+export function guiPositionToPos(position: number[]): Pos {
+    return { x: position[1], y: position[0] }
 }
