@@ -6,10 +6,10 @@ import {
     MsgPlayMoveResponse,
 } from "../generated/checkers/tx"
 
-export const typeUrlMsgCreateGame = "/dotneko.checkers.checkers.MsgCreateGame"
-export const typeUrlMsgCreateGameResponse = "/dotneko.checkers.checkers.MsgCreateGameResponse"
-export const typeUrlMsgPlayMove = "/dotneko.checkers.checkers.MsgPlayMove"
-export const typeUrlMsgPlayMoveResponse = "/dotneko.checkers.checkers.MsgPlayMoveResponse"
+export const typeUrlMsgCreateGame = "/b9lab.checkers.checkers.MsgCreateGame"
+export const typeUrlMsgCreateGameResponse = "/b9lab.checkers.checkers.MsgCreateGameResponse"
+export const typeUrlMsgPlayMove = "/b9lab.checkers.checkers.MsgPlayMove"
+export const typeUrlMsgPlayMoveResponse = "/b9lab.checkers.checkers.MsgPlayMoveResponse"
 
 export const checkersTypes: ReadonlyArray<[string, GeneratedType]> = [
     [typeUrlMsgCreateGame, MsgCreateGame],
@@ -19,7 +19,7 @@ export const checkersTypes: ReadonlyArray<[string, GeneratedType]> = [
 ]
 
 export interface MsgCreateGameEncodeObject extends EncodeObject {
-    readonly typeUrl: "/dotneko.checkers.checkers.MsgCreateGame"
+    readonly typeUrl: "/b9lab.checkers.checkers.MsgCreateGame"
     readonly value: Partial<MsgCreateGame>
 }
 
@@ -30,7 +30,7 @@ export function isMsgCreateGameEncodeObject(
 }
 
 export interface MsgCreateGameResponseEncodeObject extends EncodeObject {
-    readonly typeUrl: "/dotneko.checkers.checkers.MsgCreateGameResponse"
+    readonly typeUrl: "/b9lab.checkers.checkers.MsgCreateGameResponse"
     readonly value: Partial<MsgCreateGameResponse>
 }
 
@@ -41,7 +41,7 @@ export function isMsgCreateGameResponseEncodeObject(
 }
 
 export interface MsgPlayMoveEncodeObject extends EncodeObject {
-    readonly typeUrl: "/dotneko.checkers.checkers.MsgPlayMove"
+    readonly typeUrl: "/b9lab.checkers.checkers.MsgPlayMove"
     readonly value: Partial<MsgPlayMove>
 }
 
@@ -52,7 +52,7 @@ export function isMsgPlayMoveEncodeObject(
 }
 
 export interface MsgPlayMoveResponseEncodeObject extends EncodeObject {
-    readonly typeUrl: "/dotneko.checkers.checkers.MsgPlayMoveResponse"
+    readonly typeUrl: "/b9lab.checkers.checkers.MsgPlayMoveResponse"
     readonly value: Partial<MsgPlayMoveResponse>
 }
 
