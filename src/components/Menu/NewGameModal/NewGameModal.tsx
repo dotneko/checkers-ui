@@ -1,4 +1,11 @@
-import Lockr from "lockr";
+import { OfflineSigner } from "@cosmjs/proto-signing"
+import { GasPrice } from "@cosmjs/stargate"
+
+import { Window as KeplrWindow } from "@keplr-wallet/types"
+
+import { CheckersSigningStargateClient } from "src/checkers_signingstargateclient"
+import { checkersChainId, getCheckersChainInfo } from "src/types/checkers/chain"
+
 import React, { Component, CSSProperties } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -18,13 +25,26 @@ import "./NewGame.css";
 import PlayerAiCheckbox from "./PlayerAiCheckbox";
 import PlayerNameInput from "./PlayerNameInput";
 
+declare global {
+    interface Window extends KeplrWindow {}
+}
+
+interface CreatorInfo {
+    creator: string
+    signingClient: CheckersSigningStargateClient
+}
+
 interface INewGameModalProps {
     close: () => void;
     shown: boolean;
+    rpcUrl: string;
 }
 
 interface INewGameModalState {
     showAlert: boolean;
+    creator: string
+    signingClient: CheckersSigningStargateClient | undefined
+
 }
 
 export default class NewGameModal extends Component<
@@ -45,7 +65,9 @@ export default class NewGameModal extends Component<
     public constructor(props: INewGameModalProps) {
         super(props);
         this.state = {
-            showAlert: false
+            showAlert: false,
+            creator: "",
+            signingClient: undefined,
         };
         this.p1NameRef = React.createRef();
         this.p2NameRef = React.createRef();
@@ -54,6 +76,33 @@ export default class NewGameModal extends Component<
 
         this.handleSubmit = this.handleSubmit.bind(this);
     }
+
+    protected async getSigningStargateClient(): Promise<CreatorInfo> {
+        if (this.state.creator && this.state.signingClient)
+            return {
+                creator: this.state.creator,
+                signingClient: this.state.signingClient,
+            }
+        const { keplr } = window
+        if (!keplr) {
+            alert("You need to install Keplr")
+            throw new Error("You need to install Keplr")
+        }
+        await keplr.experimentalSuggestChain(getCheckersChainInfo())
+        await keplr.enable(checkersChainId)
+        const offlineSigner: OfflineSigner = keplr.getOfflineSigner!(checkersChainId)
+        const creator = (await offlineSigner.getAccounts())[0].address
+        const client: CheckersSigningStargateClient = await CheckersSigningStargateClient.connectWithSigner(
+            this.props.rpcUrl,
+            offlineSigner,
+            {
+                gasPrice: GasPrice.fromString("1stake"),
+            },
+        )
+        this.setState({ creator: creator, signingClient: client })
+        return { creator: creator, signingClient: client }
+    }
+
 
     public render() {
         return (
